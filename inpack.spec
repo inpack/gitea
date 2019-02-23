@@ -1,6 +1,6 @@
 [project]
 name = gitea
-version = 1.4.1
+version = 1.7.2
 vendor = gitea.io
 homepage = https://gitea.io
 groups = app/dev,app/prod,app/co
@@ -8,7 +8,7 @@ description = A painless self-hosted Git service fork of Gogs.
 
 
 %build
-PREFIX="{{.project__prefix}}"
+PREFIX="/opt/gitea/gitea"
 
 cd {{.inpack__pack_dir}}/deps
 
