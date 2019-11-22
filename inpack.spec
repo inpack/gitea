@@ -1,6 +1,6 @@
 [project]
 name = gitea
-version = 1.7.2
+version = 1.10.0
 vendor = gitea.io
 homepage = https://gitea.io
 groups = app/dev,app/prod,app/co
