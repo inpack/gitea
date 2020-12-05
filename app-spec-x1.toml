@@ -65,7 +65,7 @@ $DAEMON $DAEMON_ARGS >> /home/action/var/log/gitea.log 2>&1 &
     name = "app_ini"
     title = "ini 增量配置"
     type = 304
-    default = "[i18n]\nLANGS = en-US,zh-CN\nNAMES = English,中文"
+    default = "[i18n]\nLANGS = en-US,zh-CN\nNAMES = English,中文\n\n[service]\nENABLE_CAPTCHA = true\nDISABLE_REGISTRATION = false\nREQUIRE_SIGNIN_VIEW = true\n"
 
 [exp_res]
   cpu_min = 2
