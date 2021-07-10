@@ -5,17 +5,12 @@ type_tags = ["devops", "enterprise"]
 [meta]
   id = "gitea-x1"
   name = "Gitea 源码管理系统"
-  version = "1.1"
+  version = "1.14"
   subtitle = "开源、轻量、自主部署的 Git 源码管理系统"
-
-[[depends]]
-  id = "sysinner-mysql-x1"
-  name = "MySQL x1"
-  version = "1.0"
 
 [[packages]]
   name = "gitea"
-  version = "1.13"
+  version = "1.14"
 
 [[executors]]
   name = "gitea-main"
@@ -33,7 +28,7 @@ if [ ! -d "/opt/gitea/gitea" ]; then
 fi
 rsync -av {{.inpack_prefix_gitea}}/* /opt/gitea/gitea/
 
-/home/action/.sysinner/inagent config-render --app-spec gitea-x1 --in /opt/gitea/gitea/misc/app.ini --out /opt/gitea/gitea/custom/conf/app.ini
+/home/action/.sysinner/inagent config-render --app-spec gitea-x1 --in /opt/gitea/gitea/misc/v1/app.example.ini --out /opt/gitea/gitea/custom/conf/app.ini
 /home/action/.sysinner/inagent config-merge --app-spec gitea-x1 --config /opt/gitea/gitea/custom/conf/app.ini --with-config-field cfg/gitea/app_ini
 
 cd /opt/gitea/gitea/
@@ -65,11 +60,94 @@ $DAEMON $DAEMON_ARGS >> /home/action/var/log/gitea.log 2>&1 &
     name = "app_ini"
     title = "ini 增量配置"
     type = 304
-    default = "[i18n]\nLANGS = en-US,zh-CN\nNAMES = English,中文\n\n[service]\nENABLE_CAPTCHA = true\nDISABLE_REGISTRATION = false\nREQUIRE_SIGNIN_VIEW = true\n"
+    default = """;; see https://docs.gitea.io/en-us/config-cheat-sheet/ for additional documentation.
+
+APP_NAME = {{.cfg/gitea/app_name}}
+RUN_USER = action
+RUN_MODE = prod
+
+[server]
+PROTOCOL = http
+
+; DOMAIN = code.example.com
+DOMAIN = {{.pod/oprep/port/http/lan_addr}}
+
+ROOT_URL = %(PROTOCOL)s://{{.pod/oprep/port/http/lan_addr}}:{{.pod/oprep/port/http/host_port}}/
+
+HTTP_ADDR = 0.0.0.0
+HTTP_PORT = 3000
+
+REDIRECT_OTHER_PORT = false
+PORT_TO_REDIRECT = 80
+
+START_SSH_SERVER = true
+SSH_LISTEN_HOST = 0.0.0.0
+SSH_LISTEN_PORT = 3022
+
+SSH_PORT = {{.pod/oprep/port/gitssh/host_port}}
+
+SSH_ROOT_PATH = /home/action/.ssh
+
+[database]
+DB_TYPE = sqlite3
+
+; DB_TYPE = mysql
+; HOST = {{.pod/oprep/port/mysql/lan_addr}}:{{.pod/oprep/port/mysql/host_port}}
+; NAME = dbaction
+; USER = dbuser
+; PASSWD = {{.cfg/sysinner-mysql/db_auth}}
+
+LOG_SQL = false
+
+[security]
+
+LOGIN_REMEMBER_DAYS = 30
+
+[oauth2]
+ENABLE = false
+
+[time]
+DEFAULT_UI_LOCATION = Asia/Shanghai
+
+[log]
+MODE = file
+LEVEL = Info
+DISABLE_ROUTER_LOG= true
+
+[git]
+MAX_GIT_DIFF_LINES = 2000
+
+[service]
+REQUIRE_SIGNIN_VIEW = true
+ENABLE_CAPTCHA = true
+DEFAULT_KEEP_EMAIL_PRIVATE = true
+DISABLE_REGISTRATION = false
+
+[repository]
+ROOT = /opt/gitea/gitea/data/repos
+
+[session]
+PROVIDER = file
+
+[picture]
+DISABLE_GRAVATAR = true
+
+[api]
+ENABLE_SWAGGER = true
+
+[i18n]
+LANGS = en-US,zh-CN
+NAMES = English,中文
+
+[other]
+SHOW_FOOTER_BRANDING = false
+SHOW_FOOTER_VERSION = false
+SHOW_FOOTER_TEMPLATE_LOAD_TIME = false
+"""
 
 [exp_res]
   cpu_min = 2
-  mem_min = 128
+  mem_min = 384
   vol_min = 5
 
 [exp_deploy]
@@ -81,4 +159,3 @@ $DAEMON $DAEMON_ARGS >> /home/action/var/log/gitea.log 2>&1 &
 [[urls]]
   name = "gdoc"
   url = "https://www.sysinner.cn/gdoc/view/app-guide/gitea/x1.md"
-

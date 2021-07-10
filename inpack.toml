@@ -1,9 +1,9 @@
 [project]
 name = "gitea"
-version = "1.13.1"
+version = "1.14.4"
 vendor = "gitea.io"
 homepage = "https://gitea.io"
-description = "A painless self-hosted Git service fork of Gogs."
+description = "A painless self-hosted Git service"
 groups = ["app/dev", "app/prod", "app/co"]
 
 [files]
@@ -12,6 +12,8 @@ allow = "misc/"
 [scripts]
 build = """
 PREFIX=\"/opt/gitea/gitea\"
+
+# wget "https://raw.githubusercontent.com/go-gitea/gitea/main/custom/conf/app.example.ini" -O misc/v1/app.example.ini
 
 cd {{.inpack__pack_dir}}/deps
 
