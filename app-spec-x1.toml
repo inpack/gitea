@@ -112,7 +112,7 @@ DEFAULT_UI_LOCATION = Asia/Shanghai
 [log]
 MODE = file
 LEVEL = Info
-DISABLE_ROUTER_LOG= true
+DISABLE_ROUTER_LOG = true
 
 [git]
 MAX_GIT_DIFF_LINES = 2000
@@ -148,7 +148,7 @@ SHOW_FOOTER_TEMPLATE_LOAD_TIME = false
 [exp_res]
   cpu_min = 2
   mem_min = 384
-  vol_min = 5
+  vol_min = 1
 
 [exp_deploy]
   rep_min = 1
