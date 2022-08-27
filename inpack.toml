@@ -1,6 +1,6 @@
 [project]
 name = "gitea"
-version = "1.16.8"
+version = "1.17.1"
 vendor = "gitea.io"
 homepage = "https://gitea.io"
 description = "A painless self-hosted Git service"

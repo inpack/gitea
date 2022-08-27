@@ -5,12 +5,12 @@ type_tags = ["devops", "enterprise"]
 [meta]
   id = "gitea-x1"
   name = "Gitea 源码管理系统"
-  version = "1.14"
+  version = "1.17"
   subtitle = "开源、轻量、自主部署的 Git 源码管理系统"
 
 [[packages]]
   name = "gitea"
-  version = "1.14"
+  version = "1.17"
 
 [[executors]]
   name = "gitea-main"
