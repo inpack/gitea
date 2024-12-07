@@ -1,29 +1,33 @@
 kind = "AppSpec"
+last_version = "0.0"
 roles = [101, 100]
+runtime_images = ["sysinner/innerstack-g3:el8"]
 type_tags = ["devops", "enterprise"]
 
 [meta]
-  id = "gitea-x1"
-  name = "Gitea 源码管理系统"
-  version = "1.18"
-  subtitle = "开源、轻量、自主部署的 Git 源码管理系统"
+id = "gitea-x1"
+name = "Gitea 源码管理系统"
+version = "1.1.22"
+created = 0
+updated = 0
+subtitle = "开源、轻量、自主部署的 Git 源码管理系统"
 
 [[packages]]
-  name = "gitea"
-  version = "1.17"
+name = "gitea"
+version = "1.22"
 
 [[executors]]
-  name = "gitea-main"
-  exec_start = """
-DAEMON=/opt/gitea/gitea/gitea
-DAEMON_ARGS="web"
+name = "gitea-main"
+updated = 0
+exec_start = """DAEMON=/opt/gitea/gitea/gitea
+DAEMON_ARGS=\"web\"
 NAME=gitea
 
 if pidof $NAME; then
     exit 0
 fi
 
-if [ ! -d "/opt/gitea/gitea" ]; then
+if [ ! -d \"/opt/gitea/gitea\" ]; then
   mkdir -p /opt/gitea/gitea
 fi
 rsync -av {{.inpack_prefix_gitea}}/* /opt/gitea/gitea/
@@ -34,33 +38,37 @@ rsync -av {{.inpack_prefix_gitea}}/* /opt/gitea/gitea/
 cd /opt/gitea/gitea/
 $DAEMON $DAEMON_ARGS >> /home/action/var/log/gitea.log 2>&1 &
 """
-  exec_stop = "killall gitea"
 
-  [executors.plan]
-    on_tick = 60
-
-[[service_ports]]
-  name = "http"
-  box_port = 3000
+exec_stop = "killall gitea"
+priority = 0
+[executors.plan]
+on_boot = true
+on_tick = 0
 
 [[service_ports]]
-  name = "gitssh"
-  box_port = 3022
+name = "http"
+box_port = 3000
+host_port = 0
+
+[[service_ports]]
+name = "gitssh"
+box_port = 3022
+host_port = 0
 
 [configurator]
-  name = "cfg/gitea"
+name = "cfg/gitea"
 
-  [[configurator.fields]]
-    name = "app_name"
-    title = "应用名称"
-    type = 1
-    default = "Gitea"
+[[configurator.fields]]
+name = "app_name"
+title = "应用名称"
+type = 1
+default = "Gitea"
 
-  [[configurator.fields]]
-    name = "app_ini"
-    title = "ini 增量配置"
-    type = 304
-    default = """;; see https://docs.gitea.io/en-us/config-cheat-sheet/ for additional documentation.
+[[configurator.fields]]
+name = "app_ini"
+title = "ini 增量配置"
+type = 304
+default = """;; see https://docs.gitea.io/en-us/config-cheat-sheet/ for additional documentation.
 
 APP_NAME = {{.cfg/gitea/app_name}}
 RUN_USER = action
@@ -69,7 +77,7 @@ RUN_MODE = prod
 [server]
 PROTOCOL = http
 
-; DOMAIN = code.example.com
+; DOMAIN = code.sysinner.cn
 DOMAIN = {{.pod/oprep/port/http/lan_addr}}
 
 ROOT_URL = %(PROTOCOL)s://{{.pod/oprep/port/http/lan_addr}}:{{.pod/oprep/port/http/host_port}}/
@@ -97,14 +105,15 @@ DB_TYPE = sqlite3
 ; USER = dbuser
 ; PASSWD = {{.cfg/sysinner-mysql/db_auth}}
 
+
 LOG_SQL = false
 
 [security]
-
+INSTALL_LOCK = true
 LOGIN_REMEMBER_DAYS = 30
 
 [oauth2]
-ENABLE = false
+ENABLED = false
 
 [time]
 DEFAULT_UI_LOCATION = Asia/Shanghai
@@ -112,7 +121,7 @@ DEFAULT_UI_LOCATION = Asia/Shanghai
 [log]
 MODE = file
 LEVEL = Info
-DISABLE_ROUTER_LOG = true
+DISABLE_ROUTER_LOG= true
 
 [git]
 MAX_GIT_DIFF_LINES = 2000
@@ -135,6 +144,7 @@ DISABLE_GRAVATAR = true
 [api]
 ENABLE_SWAGGER = true
 
+
 [i18n]
 LANGS = en-US,zh-CN
 NAMES = English,中文
@@ -142,20 +152,23 @@ NAMES = English,中文
 [other]
 SHOW_FOOTER_BRANDING = false
 SHOW_FOOTER_VERSION = false
-SHOW_FOOTER_TEMPLATE_LOAD_TIME = false
-"""
+SHOW_FOOTER_TEMPLATE_LOAD_TIME = false"""
+
 
 [exp_res]
-  cpu_min = 2
-  mem_min = 384
-  vol_min = 1
+cpu_min = 2
+mem_min = 256
+vol_min = 5
 
 [exp_deploy]
-  rep_min = 1
-  rep_max = 1
-  sys_state = 1
-  network_mode = 1
+rep_min = 1
+rep_max = 1
+sys_state = 1
+failover_time = 300
+failover_num_max = 0
+failover_rate_max = 0
+network_mode = 1
 
 [[urls]]
-  name = "gdoc"
-  url = "https://www.sysinner.cn/gdoc/view/app-guide/gitea/x1.md"
+name = "gdoc"
+url = "https://www.sysinner.cn/gdoc/view/app-guide/gitea/x1.md"
